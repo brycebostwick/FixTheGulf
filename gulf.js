@@ -24,8 +24,8 @@
 	/**
 	 * Determine the user's language code, defaulting to English if not found.
 	 */
-	const userLanguage = navigator.language || 'en'
-	const currentLanguage = userLanguage.split('-')[0];
+	const lang = document.documentElement.getAttribute("lang");
+	const currentLanguage = lang.split('-')[0] || 'en';
 	const mapping = langMappings[currentLanguage];
 	const originalFull = mapping.base + mapping.originalCountry;
 	const replacementFull = mapping.base + mapping.replacementCountry;
