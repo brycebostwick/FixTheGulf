@@ -6,10 +6,14 @@
   "icons": {
     "128": "icon.png"
   },
+
   "content_scripts": [{
     "world": "MAIN",
     "js": ["gulf.js"],
-    "matches": ["https://www.google.com/maps/*"],
+    "matches": [
+      "https://www.google.com/maps/*",
+      "https://www.google.de/maps/*"
+    ],
     "run_at": "document_idle"
   }]
 }
