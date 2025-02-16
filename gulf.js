@@ -1,5 +1,35 @@
 (() => {
 	/**
+	 * Define localized mappings for the string "Gulf of America" in various languages.
+	 * - base: the common prefix for all translations
+	 * - originalCountry: the country name to replace in the original string
+	 * - replacementCountry: the country name to use in the replacement string
+	  */
+	const langMappings = {
+		"en": {
+			base: "Gulf of ",
+			originalCountry: "America",
+			replacementCountry: "Mexico",
+
+		},
+		"de": {
+			base: "Golf von ",
+			originalCountry: "Amerika",
+			replacementCountry: "Mexiko",
+
+		},
+		/* Add more languages here as needed */ 
+	};
+
+	/**
+	 * Determine the user's language code, defaulting to English if not found.
+	 */
+	const lang = document.documentElement.getAttribute("lang");
+	const currentLanguage = lang.split('-')[0] || 'en';
+	const mapping = langMappings[currentLanguage];
+	const originalFull = mapping.base + mapping.originalCountry;
+	const replacementFull = mapping.base + mapping.replacementCountry;
+	/**
 	 * The functions we're patching are available globally on the variable named `_`,
 	 * but they have computer-generated names that change over time
 	 * when the script is updated, like `_.N8a` or `_.gd`.
@@ -53,7 +83,7 @@
 	 and then calls out to the original function.
 	 */
 	_[jsonParsingFunctionName] = function(a, b) {
-		a = a.replaceAll(' (Gulf of America)', "").replaceAll('Gulf of America', 'Gulf of Mexico')
+		a = a.replaceAll(' (' + originalFull + ')', "").replaceAll(originalFull, replacementFull)
 		return originalJsonParsingFunction(a, b)
 	}
 
@@ -133,15 +163,15 @@
 	 */
 	const patchLabelBytesIfNeeded = (labelBytes) => {
 		// Define the bytes we want to search for
-		const SEARCH_PATTERN_BYTES = [...'Gulf of America'].map(char => char.charCodeAt(0))
+		const SEARCH_PATTERN_BYTES = [...replacementFull].map(char => char.charCodeAt(0))
 
 		// Constants for special cases
 		const CHAR_CODE_SPACE = " ".charCodeAt(0)
 		const CHAR_CODE_CAPITAL_A = "A".charCodeAt(0)
 		const CHAR_CODE_PARENTH = '('.charCodeAt(0)
 		const CHAR_CODE_CAPITAL_G = 'G'.charCodeAt(0)
-    // \u200B is a zero-width space character. We add it to make the strings the same length
-		const REPLACEMENT_BYTES = [..."Mexico\u200B"].map(char => char.charCodeAt(0))
+    	// \u200B is a zero-width space character. We add it to make the strings the same length
+		const REPLACEMENT_BYTES = [...mapping.replacementCountry + '\u200B'].map(char => char.charCodeAt(0))
 
 		// For every possible starting character in our `labelBytes` blob...
 		for(let labelByteStartingIndex = 0; labelByteStartingIndex < labelBytes.length; labelByteStartingIndex++) {
@@ -198,9 +228,9 @@
 				// We found a match! Find the offset of the letter "A" within the match
 				// (we can't just add a fixed value because we don't know how long the
 				// match even is, thanks to variable space matching)
-				const americaStartIndex = labelBytes.indexOf(CHAR_CODE_CAPITAL_A, labelByteStartingIndex)
+				const countryStartIndex = labelBytes.indexOf(CHAR_CODE_CAPITAL_A, labelByteStartingIndex)
 				let parenthStartIndex = -1;
-				// Check if the label is `Gulf of Mexico (Gulf of America)`
+				// Check if the label is with parenthesis in the localised string`
 				for (let i = 0; i < labelBytes.length; i++) {
 					if (labelBytes[i] == CHAR_CODE_PARENTH && labelBytes[i + 1] == CHAR_CODE_CAPITAL_G) {
 						parenthStartIndex = i
@@ -208,18 +238,18 @@
 					}
 				}
 				if (parenthStartIndex > -1) {
-					// Replace "(Gulf of" with zero-width spaces
-					for (let i = 0; i < 8; i++) {
+					// Replace "(base" with zero-width spaces
+					for (let i = 0; i < mapping.base.length; i++) {
 						labelBytes[parenthStartIndex + i] = '\u200B'.charCodeAt(0)
 					}
-					// Replace "America)" with zero-width spaces
-					for (let i = 0; i < 8; i++) {
-						labelBytes[americaStartIndex + i] = '\u200B'.charCodeAt(0)
+					// Replace "originalCountry)" with zero-width spaces
+					for (let i = 0; i < mapping.originalCountry.length+1; i++) {
+						labelBytes[countryStartIndex + i] = '\u200B'.charCodeAt(0)
 					}
 				} else {
-					// Replace "America" with "Mexico\u200B"
+					// Replace "originalCountry" with "replacementCountry\u200B"
 					for (let i = 0; i < REPLACEMENT_BYTES.length; i++) {
-						labelBytes[americaStartIndex + i] = REPLACEMENT_BYTES[i]
+						labelBytes[countryStartIndex + i] = REPLACEMENT_BYTES[i]
 					}
 				}
 			}
