@@ -197,8 +197,8 @@
 				// We found a match! Find the offset of the letter "M" within the match
 				// (we can't just add a fixed value because we don't know how long the
 				// match even is, thanks to variable space matching)
-				const mexicoStartIndex = labelBytes.indexOf(CHAR_CODE_CAPITAL_M, labelByteStartingIndex);
-				let parenthStartIndex = -1;
+				const mexicoStartIndex = labelBytes.indexOf(CHAR_CODE_CAPITAL_M, labelByteStartingIndex)
+				let parenthStartIndex = -1
 				// Check if the label is `Gulf of Mexico (Gulf of America)`
 				for (let i = 0; i < labelBytes.length; i++) {
 					if (labelBytes[i] == CHAR_CODE_PARENTH && labelBytes[i + 1] == CHAR_CODE_CAPITAL_G) {
@@ -213,12 +213,12 @@
 					}
 					// Replace "America)" with zero-width spaces
 					for (let i = 0; i < 8; i++) {
-						labelBytes[mexicoStartIndex + i] = '\u200B'.charCodeAt(0);
+						labelBytes[mexicoStartIndex + i] = '\u200B'.charCodeAt(0)
 					}
 				} else {
 					// Replace "Mexico" with "Trump\u200B"
 					for (let i = 0; i < REPLACEMENT_BYTES.length; i++) {
-						labelBytes[mexicoStartIndex + i] = REPLACEMENT_BYTES[i];
+						labelBytes[mexicoStartIndex + i] = REPLACEMENT_BYTES[i]
 					}
 				}
 			}
