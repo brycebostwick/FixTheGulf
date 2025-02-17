@@ -53,8 +53,7 @@
 	 and then calls out to the original function.
 	 */
 	_[jsonParsingFunctionName] = function(a, b) {
-		a = a.replaceAll(' (Gulf of America)', "").replaceAll('Gulf of America', 'Gulf of Mexico')
-		return originalJsonParsingFunction(a, b)
+		a = a.replaceAll(' (Gulf of Mexico)', "").replaceAll('Gulf of Mexico', 'Gulf of Trump');
 	}
 
 
@@ -133,15 +132,15 @@
 	 */
 	const patchLabelBytesIfNeeded = (labelBytes) => {
 		// Define the bytes we want to search for
-		const SEARCH_PATTERN_BYTES = [...'Gulf of America'].map(char => char.charCodeAt(0))
+		const SEARCH_PATTERN_BYTES = [...'Gulf of Mexico'].map(char => char.charCodeAt(0))
 
 		// Constants for special cases
 		const CHAR_CODE_SPACE = " ".charCodeAt(0)
-		const CHAR_CODE_CAPITAL_A = "A".charCodeAt(0)
+		const CHAR_CODE_CAPITAL_M = "M".charCodeAt(0)
 		const CHAR_CODE_PARENTH = '('.charCodeAt(0)
 		const CHAR_CODE_CAPITAL_G = 'G'.charCodeAt(0)
     // \u200B is a zero-width space character. We add it to make the strings the same length
-		const REPLACEMENT_BYTES = [..."Mexico\u200B"].map(char => char.charCodeAt(0))
+		const REPLACEMENT_BYTES = [..."Trump\u200B"].map(char => char.charCodeAt(0))
 
 		// For every possible starting character in our `labelBytes` blob...
 		for(let labelByteStartingIndex = 0; labelByteStartingIndex < labelBytes.length; labelByteStartingIndex++) {
@@ -195,10 +194,10 @@
 			}
 
 			if (foundMatch) {
-				// We found a match! Find the offset of the letter "A" within the match
+				// We found a match! Find the offset of the letter "M" within the match
 				// (we can't just add a fixed value because we don't know how long the
 				// match even is, thanks to variable space matching)
-				const americaStartIndex = labelBytes.indexOf(CHAR_CODE_CAPITAL_A, labelByteStartingIndex)
+				const mexicoStartIndex = labelBytes.indexOf(CHAR_CODE_CAPITAL_M, labelByteStartingIndex);
 				let parenthStartIndex = -1;
 				// Check if the label is `Gulf of Mexico (Gulf of America)`
 				for (let i = 0; i < labelBytes.length; i++) {
@@ -214,12 +213,12 @@
 					}
 					// Replace "America)" with zero-width spaces
 					for (let i = 0; i < 8; i++) {
-						labelBytes[americaStartIndex + i] = '\u200B'.charCodeAt(0)
+						labelBytes[mexicoStartIndex + i] = '\u200B'.charCodeAt(0);
 					}
 				} else {
-					// Replace "America" with "Mexico\u200B"
+					// Replace "Mexico" with "Trump\u200B"
 					for (let i = 0; i < REPLACEMENT_BYTES.length; i++) {
-						labelBytes[americaStartIndex + i] = REPLACEMENT_BYTES[i]
+						labelBytes[mexicoStartIndex + i] = REPLACEMENT_BYTES[i];
 					}
 				}
 			}

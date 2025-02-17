@@ -1,6 +1,6 @@
 {
-  "name": "Restore Gulf of Mexico",
-  "description": "Updates Google Maps to show the Gulf of Mexico again.",
+  "name": "Fix Gulf of Mexico",
+  "description": "Updates Google Maps to fix the Gulf of Mexico.",
   "version": "1.0",
   "manifest_version": 3,
   "icons": {
